@@ -3,13 +3,13 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
 
-from solver import GM, R
+from solver import GM, R, cross
 
 
 def rv2pecc(r, v):
-    k = np.cross(r, v)
+    k = cross(r, v)
     p = np.linalg.norm(k) ** 2 / GM
-    ecc = -np.cross(k, v) / GM - r / np.linalg.norm(r)
+    ecc = -cross(k, v) / GM - r / np.linalg.norm(r)
     return p, ecc
 
 

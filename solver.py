@@ -28,8 +28,13 @@ area = m.pi * 9 ** 2 / 4
 cd = 0.07
 
 
-def calculate_solution(a, b, dt):
-    n_steps = int(burn_time / dt)
+# IDE bug workaround
+def cross(a, b):
+    return np.cross(a, b)
+
+
+def calculate_solution(a, b, time_step):
+    n_steps = int(burn_time / time_step)
 
     r0 = np.array([0.0, R, 0.0])
     v0 = np.zeros(3)
@@ -55,19 +60,18 @@ def calculate_solution(a, b, dt):
             angle = m.pi / 2 + (a * burn_completion) ** b
             thrust_dir = np.array([m.cos(angle), m.sin(angle), 0])
             a_thrust = thrust_dir * thrust_force / mass
+            mass -= mu * time_step
 
-            mass -= mu * dt
-
-        a_centrifugal = np.cross(W, np.cross(W, r))
-        a_coriolis = 2 * np.cross(W, v)
+        a_centrifugal = cross(W, cross(W, r))
+        a_coriolis = 2 * cross(W, v)
 
         air_density = get_air_density_at(r_abs)
         a_drag = -cd * air_density * np.linalg.norm(v) * v * area / 2 / mass
 
         acceleration = a_grav + a_thrust + a_centrifugal + a_coriolis + a_drag
 
-        v += acceleration * dt
-        r += v * dt
+        v += acceleration * time_step
+        r += v * time_step
 
         rs[step + 1] = r
         vs[step + 1] = v

@@ -4,7 +4,6 @@ import matplotlib.pyplot as plt
 from solver import calculate_solution
 from plotter import State
 
-
 time_step = 1
 
 a_min = 0
