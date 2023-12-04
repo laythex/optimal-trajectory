@@ -36,7 +36,7 @@ ax.set_xlabel(r'$Параметр\ \bf{b}$')
 ax.set_ylabel(r'$Параметр\ \bf{a}$')
 ax.set_title(r'$a\times b:$ ' + f'{a_count}' + r'$\times$' + f'{b_count}' +
              r'$;\ Шаг:\ $' + f'{time_step} ' + r'$с$' + '\n' +
-             r'$a_{0}=$' + f'{round(a_optimal, 2)}' + r'$;\ b_{0}=$' + f'{round(b_optimal, 2)}')
+             r'$a_{0}=$' + f'{round(float(a_optimal), 2)}' + r'$;\ b_{0}=$' + f'{round(float(b_optimal), 2)}')
 
 fig.savefig(f'results/{a_count}x{b_count}_{a_min}-{a_max}_{b_min}-{b_max}_{time_step}s.png', dpi=1000)
 

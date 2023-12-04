@@ -79,14 +79,17 @@ class State:
         self.ax.set_title(r'$Pe=$' + f'{round(self.get_perigee(), 1)} ' + r'$km;\ $' +
                           r'$Ecc=$' + f'{round(np.linalg.norm(self.ecc), 4)}')
 
-    def animate_launch(self):
+    def animate_launch(self, save=False):
         self.line_r, = self.ax.plot([], [], 'ro')
         self.line_v, = self.ax.plot([], [], 'ro')
         self.line_o, = self.ax.plot([], [], 'r--')
         self.line_t, = self.ax.plot([], [], 'r')
 
         self.anim = FuncAnimation(self.fig, self.update, self.count, interval=0.1)
-        # self.anim.save('launch2.gif')
+
+        if save:
+            self.anim.save('launch.gif')
+
         plt.show()
 
     def update(self, k):

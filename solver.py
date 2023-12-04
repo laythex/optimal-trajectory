@@ -41,11 +41,11 @@ def calculate_solution(a, b, time_step):
 
     mass = dry_mass + fuel_mass
 
-    rs = np.zeros((n_steps + 1, 3))
-    vs = np.zeros((n_steps + 1, 3))
+    rs = np.zeros((n_steps, 3))
+    vs = np.zeros((n_steps, 3))
     rs[0], vs[0] = r0, v0
 
-    for step in range(n_steps):
+    for step in range(n_steps - 1):
         r = rs[step]
         v = vs[step]
 
