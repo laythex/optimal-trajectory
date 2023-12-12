@@ -8,11 +8,11 @@ time_step = 1
 
 a_min = 0
 a_max = 3
-a_count = 50
+a_count = 100
 
 b_min = 0
 b_max = 3
-b_count = 50
+b_count = 100
 
 A = np.linspace(a_min, a_max, a_count)
 B = np.linspace(b_min, b_max, b_count)
