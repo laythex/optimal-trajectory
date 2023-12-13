@@ -1,5 +1,6 @@
 import math as m
 import numpy as np
+from scipy.integrate import solve_ivp
 
 # Astronomical constants
 GM = 6.672e-11 * 5.972e24
@@ -33,47 +34,37 @@ def cross(a, b):
     return np.cross(a, b)
 
 
-def calculate_solution(a, b, time_step):
-    n_steps = int(burn_time / time_step)
+def ivp_rhs(_, state, a, b):
+    r = state[:3]
+    v = state[3:6]
+    mass = state[-1]
 
+    r_abs = np.linalg.norm(r)
+
+    acc_grav = -r * GM / r_abs ** 3
+
+    burn_completion = 1 - (mass - dry_mass) / fuel_mass
+    angle = 0.5 * m.pi + (a * burn_completion) ** b
+    thrust_dir = np.array([m.cos(angle), m.sin(angle), 0])
+    acc_thrust = thrust_dir * thrust_force / mass
+
+    acc_centrifugal = -cross(W, cross(W, r))
+    acc_coriolis = -2 * cross(W, v)
+
+    air_density = get_air_density_at(r_abs)
+    acc_drag = -0.5 * cd * air_density * np.linalg.norm(v) * v * area / mass
+
+    acc = acc_grav + acc_thrust + acc_centrifugal + acc_coriolis + acc_drag
+
+    return np.concatenate((v, acc, np.array([-mu])))
+
+
+def calculate_solution(a, b, max_step):
     r0 = np.array([0.0, R, 0.0])
     v0 = np.zeros(3)
+    mass0 = dry_mass + fuel_mass
+    state0 = np.concatenate((r0, v0, np.array([mass0])))
 
-    mass = dry_mass + fuel_mass
+    solution = solve_ivp(ivp_rhs, [0, fuel_mass / mu], state0, max_step=max_step, args=(a, b))
 
-    rs = np.zeros((n_steps, 3))
-    vs = np.zeros((n_steps, 3))
-    rs[0], vs[0] = r0, v0
-
-    for step in range(n_steps - 1):
-        r = rs[step]
-        v = vs[step]
-
-        r_abs = np.linalg.norm(r)
-
-        a_grav = -r * GM / r_abs ** 3
-
-        a_thrust = np.zeros(3)
-
-        if mass > dry_mass:
-            burn_completion = 1 - (mass - dry_mass) / fuel_mass
-            angle = m.pi / 2 + (a * burn_completion) ** b
-            thrust_dir = np.array([m.cos(angle), m.sin(angle), 0])
-            a_thrust = thrust_dir * thrust_force / mass
-            mass -= mu * time_step
-
-        a_centrifugal = cross(W, cross(W, r))
-        a_coriolis = 2 * cross(W, v)
-
-        air_density = get_air_density_at(r_abs)
-        a_drag = -cd * air_density * np.linalg.norm(v) * v * area / 2 / mass
-
-        acceleration = a_grav + a_thrust + a_centrifugal + a_coriolis + a_drag
-
-        v += acceleration * time_step
-        r += v * time_step
-
-        rs[step + 1] = r
-        vs[step + 1] = v
-
-    return rs, vs
+    return solution.y[:6]

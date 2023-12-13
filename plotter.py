@@ -26,11 +26,11 @@ def pol2cart(rho, phi):
     return x, y
 
 
-class State:
+class Launch:
     def __init__(self, state):
-        self.rs = state[0]
-        self.vs = state[1]
-        self.count = self.rs.size
+        self.rs = np.transpose(state[:3])
+        self.vs = np.transpose(state[3:])
+        self.count = state.shape[0]
 
         self.rf = self.rs[-1]
         self.vf = self.vs[-1]
