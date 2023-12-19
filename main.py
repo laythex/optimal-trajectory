@@ -40,6 +40,6 @@ ax.set_title(r'$a\times b:$ ' + f'{a_count}' + r'$\times$' + f'{b_count}' +
 
 fig.savefig(f'results/{a_count}x{b_count}_{a_min}-{a_max}_{b_min}-{b_max}_{max_step}s.png', dpi=1000)
 
-optimal_state = LaunchAttempt(calculate_solution(a_optimal, b_optimal, max_step))
+optimal_state = Launch(calculate_solution(a_optimal, b_optimal, max_step))
 optimal_state.plot_orbit()
 optimal_state.animate_launch()
